@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f8f8fc; padding: 20px; color: #222; }
+  h2 { font-size: 15px; font-weight: 700; color: #3C3489; margin-bottom: 4px; }
+  p.sub { font-size: 11px; color: #888; margin-bottom: 16px; }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+  .tab { padding: 7px 16px; border-radius: 10px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all .15s; }
+  .tab.active { background: #534AB7; color: #fff; }
+  .tab:not(.active) { background: #fff; color: #666; border: 1px solid #ddd; }
+
+  .controls { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
+  input[type=text] { flex: 1; border: 1.5px solid #ddd; border-radius: 10px; padding: 8px 12px; font-size: 13px; outline: none; transition: border .15s; }
+  input[type=text]:focus { border-color: #534AB7; }
+  button.gen { background: #534AB7; color: #fff; border: none; border-radius: 10px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  button.gen:hover { background: #3C3489; }
+
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .preset { padding: 4px 12px; border-radius: 20px; border: 1px solid #ddd; background: #fff; font-size: 11px; color: #555; cursor: pointer; transition: all .15s; }
+  .preset:hover { border-color: #534AB7; color: #534AB7; background: #EEEDFE; }
+
+  .output { background: #fff; border: 1.5px solid #e5e5f0; border-radius: 14px; padding: 20px; text-align: center; min-height: 140px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .output svg { max-width: 100%; }
+  .output .label-text { font-size: 11px; color: #888; }
+  .output .info-chip { font-size: 10px; background: #EEEDFE; color: #534AB7; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+  button.download { background: #1D9E75; color: #fff; border: none; border-radius: 10px; padding: 7px 18px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+  button.download:hover { background: #0F6E56; }
+  .error { color: #D85A30; font-size: 12px; }
+
+  .bulk { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .bulk-card { background: #fff; border: 1.5px solid #e5e5f0; border-radius: 12px; padding: 14px; text-align: center; }
+  .bulk-card p.title { font-size: 11px; font-weight: 600; color: #3C3489; margin-bottom: 8px; }
+  .bulk-card svg { max-width: 100%; }
+  .bulk-card .code-text { font-size: 10px; color: #aaa; margin-top: 4px; font-family: monospace; }
+  button.print-all { background: #534AB7; color: #fff; border: none; border-radius: 10px; padding: 8px 20px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 14px; }
+
+  .guide { background: #EEEDFE; border-radius: 12px; padding: 14px 16px; font-size: 12px; color: #3C3489; line-height: 1.7; }
+  .guide b { color: #3C3489; }
+  .step { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+  .step-num { width: 22px; height: 22px; background: #534AB7; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+</style>
+</head>
+<body>
+
+<h2>🔲 Generator Barcode LibraQuest</h2>
+<p class="sub">Buat barcode untuk buku (BK001–BK999) dan ID akun siswa (LQ-2024-XXX)</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('single')">Satu Barcode</button>
+  <button class="tab" onclick="switchTab('bulk')">Contoh Massal</button>
+  <button class="tab" onclick="switchTab('cara')">Cara Cetak</button>
+</div>
+
+<!-- SINGLE TAB -->
+<div id="tab-single">
+  <div class="controls">
+    <input type="text" id="codeInput" value="BK001" placeholder="Masukkan kode (cth: BK001 atau LQ-2024-001)" />
+    <button class="gen" onclick="generate()">Generate</button>
+  </div>
+
+  <p style="font-size:11px;color:#888;margin-bottom:8px;">Preset cepat:</p>
+  <div class="presets">
+    <span class="preset" onclick="setAndGen('BK001')">BK001</span>
+    <span class="preset" onclick="setAndGen('BK002')">BK002</span>
+    <span class="preset" onclick="setAndGen('BK003')">BK003</span>
+    <span class="preset" onclick="setAndGen('BK004')">BK004</span>
+    <span class="preset" onclick="setAndGen('BK005')">BK005</span>
+    <span class="preset" onclick="setAndGen('LQ-2024-001')">LQ-2024-001</span>
+    <span class="preset" onclick="setAndGen('LQ-2024-002')">LQ-2024-002</span>
+    <span class="preset" onclick="setAndGen('LQ-2024-003')">LQ-2024-003</span>
+  </div>
+
+  <div class="output" id="output-single">
+    <svg id="barcode-single"></svg>
+    <div id="info-single"></div>
+  </div>
+</div>
+
+<!-- BULK TAB -->
+<div id="tab-bulk" style="display:none">
+  <p style="font-size:12px;color:#666;margin-bottom:12px;">Contoh barcode yang sudah siap pakai untuk buku dan akun siswa di LibraQuest:</p>
+  <div class="bulk" id="bulk-grid"></div>
+  <div style="text-align:center">
+    <button class="print-all" onclick="window.print()">🖨️ Cetak Semua</button>
+  </div>
+</div>
+
+<!-- CARA CETAK TAB -->
+<div id="tab-cara" style="display:none">
+  <div class="guide">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div><b>Generate barcode</b> di tab "Satu Barcode" menggunakan kode buku (BK001–BK999) atau kode akun siswa (LQ-2024-XXX).</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div><b>Klik tombol Download SVG</b> untuk mengunduh file gambar barcode. Format SVG bisa langsung disisipkan ke Word, Canva, atau Google Docs.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div><b>Cetak dan tempel</b> di sampul buku atau kartu anggota siswa. Ukuran ideal: lebar 4–6 cm, tinggi 2–3 cm. Gunakan kertas stiker agar mudah ditempel.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div><b>Untuk produksi massal</b>, bisa pakai website gratis seperti <b>barcode.tec-it.com</b> atau <b>barcode-generator.org</b> — masukkan semua kode sekaligus dan download dalam batch.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div><b>Cara scan di LibraQuest</b>: klik tombol "Scan Barcode" di halaman Discovery, izinkan akses kamera, lalu arahkan ke barcode buku. Sistem akan langsung mengenali ID buku.</div>
+    </div>
+    <div style="margin-top:10px;padding:10px;background:#fff;border-radius:10px;font-size:11px;color:#555;">
+      💡 <b>Tips:</b> Format barcode yang digunakan LibraQuest adalah <b>Code 128</b> — salah satu standar paling umum yang bisa dibaca oleh hampir semua scanner dan kamera smartphone.
+    </div>
+  </div>
+</div>
+
+<script>
+const BOOKS = [
+  { id: 'BK001', title: 'Fisika Dasar SMA' },
+  { id: 'BK002', title: 'Sejarah Kebudayaan Islam' },
+  { id: 'BK003', title: 'Laskar Pelangi' },
+  { id: 'BK004', title: 'Algoritma & Pemrograman' },
+];
+const STUDENTS = [
+  { id: 'LQ-2024-001', name: 'Rizky Dermawan' },
+  { id: 'LQ-2024-002', name: 'Andini Safitri' },
+  { id: 'LQ-2024-003', name: 'Bagas Firmansyah' },
+  { id: 'LQ-2024-004', name: 'Citra Handayani' },
+];
+
+function generate() {
+  const code = document.getElementById('codeInput').value.trim().toUpperCase();
+  if (!code) return;
+  const svg = document.getElementById('barcode-single');
+  const info = document.getElementById('info-single');
+  try {
+    JsBarcode(svg, code, {
+      format: 'CODE128',
+      width: 2.2,
+      height: 70,
+      displayValue: true,
+      fontSize: 13,
+      fontOptions: 'bold',
+      margin: 10,
+      background: '#ffffff',
+      lineColor: '#111111',
+    });
+    info.innerHTML = `
+      <span class="info-chip">Format: Code 128</span>
+      <div style="margin-top:8px">
+        <button class="download" onclick="downloadSVG('${code}')">⬇ Download SVG</button>
+      </div>
+      <p class="label-text" style="margin-top:6px">Kode: <b>${code}</b></p>
+    `;
+  } catch(e) {
+    info.innerHTML = `<p class="error">Kode tidak valid. Gunakan huruf, angka, atau tanda hubung.</p>`;
+  }
+}
+
+function setAndGen(code) {
+  document.getElementById('codeInput').value = code;
+  generate();
+}
+
+function downloadSVG(code) {
+  const svg = document.getElementById('barcode-single');
+  const data = new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([data], { type: 'image/svg+xml' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `barcode-${code}.svg`;
+  a.click();
+}
+
+function buildBulk() {
+  const grid = document.getElementById('bulk-grid');
+  grid.innerHTML = '';
+  const allItems = [
+    ...BOOKS.map(b => ({ id: b.id, sub: b.title, type: 'Buku' })),
+    ...STUDENTS.map(s => ({ id: s.id, sub: s.name, type: 'Siswa' })),
+  ];
+  allItems.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'bulk-card';
+    const typeColor = item.type === 'Buku' ? '#534AB7' : '#1D9E75';
+    card.innerHTML = `
+      <p class="title" style="color:${typeColor}">${item.type}: ${item.sub}</p>
+      <svg id="bc-${item.id.replace(/[^a-zA-Z0-9]/g,'-')}"></svg>
+      <p class="code-text">${item.id}</p>
+    `;
+    grid.appendChild(card);
+    setTimeout(() => {
+      try {
+        JsBarcode(`#bc-${item.id.replace(/[^a-zA-Z0-9]/g,'-')}`, item.id, {
+          format: 'CODE128', width: 1.6, height: 55,
+          displayValue: false, margin: 6, background: '#fff', lineColor: '#111',
+        });
+      } catch(e) {}
+    }, 50);
+  });
+}
+
+function switchTab(tab) {
+  ['single','bulk','cara'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t === tab ? '' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.classList.toggle('active', ['single','bulk','cara'][i] === tab);
+  });
+  if (tab === 'bulk') buildBulk();
+}
+
+// Generate default on load
+window.onload = () => generate();
+</script>
+</body>
+</html>

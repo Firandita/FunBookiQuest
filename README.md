@@ -1,97 +1,61 @@
-# LibraQuest — Frontend
+# LibraQuest v3 — Frontend
 
-Platform web gamifikasi perpustakaan sekolah berbasis Vue.js 3 + Tailwind CSS.
+Platform gamifikasi perpustakaan sekolah · Vue.js 3 + Tailwind CSS + Pinia
 
-## Tech Stack
-- **Framework:** Vue.js 3 (Composition API, `<script setup>`)
-- **Styling:** Tailwind CSS 3
-- **State:** Pinia
-- **Router:** Vue Router 4
-- **Icons:** Lucide Vue Next
-- **Build:** Vite
-
-## Setup & Jalankan
+## Setup
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Jalankan dev server
-npm run dev
-
-# 3. Build production
+npm run dev     # http://localhost:5173
 npm run build
 ```
 
-Buka browser di `http://localhost:5173`
+## Akses halaman
 
-## Struktur Direktori
+| URL | Halaman |
+|-----|---------|
+| /basecamp | Beranda siswa |
+| /discovery | Katalog & scan barcode |
+| /archive | Riwayat & buku disimpan |
+| /hall-of-fame | Leaderboard |
+| /skill-tree | Statistik & reward |
+| /artikel | Artikel & ulasan buku |
+| /artikel/:id | Detail artikel |
+| /festival | Festival Karya Literasi |
+| /galeri-karya | Galeri karya terpilih |
+| /librarian/counter | Counter Desk |
+| /librarian/inventory | Inventaris buku |
+| /librarian/borrow-log | Log peminjaman |
+| /librarian/approve-berita | Moderasi artikel |
+| /librarian/peringkat | Peringkat siswa rinci |
 
-```
-src/
-├── assets/
-│   └── main.css              # Tailwind base + custom utilities
-├── components/
-│   ├── BottomNav.vue          # Navigasi bawah mobile (siswa)
-│   ├── LibraAI.vue            # Floating AI chatbot
-│   ├── QuestAI.vue            # Kuis gamifikasi Kahoot-style
-│   ├── BookDetailModal.vue    # Modal detail & aksi buku
-│   └── LibrarianSidebar.vue   # Sidebar desktop pustakawan
-├── views/
-│   ├── student/
-│   │   ├── Basecamp.vue       # Home: profil, XP bar, misi aktif
-│   │   ├── Discovery.vue      # Katalog buku + scan barcode
-│   │   ├── Archive.vue        # Riwayat baca & selesai
-│   │   ├── HallOfFame.vue     # Leaderboard kelas
-│   │   └── SkillTree.vue      # Statistik, badge, reward
-│   └── librarian/
-│       ├── CounterDesk.vue    # Proses pinjam & kembali cepat
-│       ├── Inventory.vue      # Tabel manajemen koleksi buku
-│       └── BorrowLog.vue      # Log semua transaksi peminjaman
-├── stores/
-│   ├── user.js                # State profil, XP, level
-│   └── library.js             # State buku, misi, peminjaman
-├── router/
-│   └── index.js               # Route siswa & pustakawan
-├── App.vue                    # Root: layout selector by role
-└── main.js                    # Entry point
+## Cara tambah foto sampul buku
+
+Simpan file gambar di `src/assets/covers/` dengan nama sesuai ID buku:
 
 ```
+src/assets/covers/
+  BK001.jpg
+  BK002.jpg
+  BK003.png   ← format jpg/jpeg/png/webp semua bisa
+  ...
+```
 
-## Ganti Role (Dev Mode)
+Ukuran ideal: 300×400px (rasio 3:4 portrait).
 
-Ada dua tombol kecil di pojok kanan atas:
-- **👤 Siswa** → tampilan mobile student
-- **📚 Pustakawan** → tampilan desktop librarian
+## Fitur baru (v3)
 
-## Fitur yang Sudah Diimplementasi
+- **Artikel & Ulasan** — siswa tulis artikel tentang buku selesai dibaca, ada like & view counter, top artikel, dan sistem referral XP (+15 XP ke penulis kalau teman baca via artikelnya lalu selesaikan QuestAI)
+- **Festival Karya Literasi** — lomba cerpen/essay/puisi per semester, Top 10 masuk Galeri Karya, Top 3 dapat reward & badge
+- **Galeri Karya** — halaman discovery karya terpilih dengan filter jenis karya
+- **Approve Artikel (Pustakawan)** — dashboard moderasi artikel bergaya YouTube Studio, bisa preview sebelum approve/tolak
+- **Peringkat Siswa (Pustakawan)** — tabel rinci sortable: XP, buku selesai, pinjaman, artikel, festival, streak, status aktif
 
-### Siswa
-- [x] Dashboard (Basecamp) dengan XP bar & level
-- [x] Misi aktif: buku digital (progress bar) & fisik (tanggal pinjam/kembali)
-- [x] Tombol "Selesai Baca" trigger QuestAI
-- [x] Discovery: katalog + filter kategori + pencarian
-- [x] Scan barcode buku fisik (simulasi)
-- [x] Modal detail buku (deskripsi, rak, aksi)
-- [x] Archive: tab sedang dibaca vs selesai
-- [x] Hall of Fame: podium + leaderboard lengkap
-- [x] Skill Tree: streak, genre radar, badge, statistik, reward
-- [x] QuestAI: kuis timer Kahoot-style + skor + XP
-- [x] LibraAI: floating chatbot sticky
+## Tech Stack
 
-### Pustakawan
-- [x] Counter Desk: scan/input ID siswa & buku
-- [x] Preview data sebelum proses
-- [x] Daftar peminjaman aktif + tombol kembali
-- [x] Inventaris: tabel buku dengan filter & pencarian
-- [x] Log peminjaman dengan filter status
-- [x] Indikator stok habis & terlambat
-
-## Pengembangan Selanjutnya
-- [ ] Integrasi API AI untuk QuestAI (OpenAI/Gemini)
-- [ ] Integrasi iPusnas untuk buku digital
-- [ ] Reader buku digital dalam platform
-- [ ] Notifikasi real-time (WebSocket)
-- [ ] QR Code generator per akun siswa
-- [ ] Kamera scan barcode native (html5-qrcode)
-- [ ] Backend API (Laravel/Node.js)
+- Vue 3 + Composition API + `<script setup>`
+- Tailwind CSS 3
+- Pinia (stores: user, library, content)
+- Vue Router 4
+- Lucide Vue Next
+- html5-qrcode (scan barcode kamera)

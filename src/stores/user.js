@@ -6,9 +6,9 @@ export const useUserStore = defineStore('user', () => {
   const role = ref('student')
   const profile = ref({
     id: 'LQ-2024-001',
-    name: 'Firandita Yunia Rahmawati',
+    name: 'Rizky Dermawan',
     class: 'XI IPA 2',
-    school: 'SMA Negeri Jogoroto',
+    school: 'SMA Negeri 1 Surabaya',
     avatar: '🦊',
     level: 4,
     title: 'Penjelajah Kata',

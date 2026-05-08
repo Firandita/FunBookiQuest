@@ -39,7 +39,7 @@ import BookDetailModal from '@/components/BookDetailModal.vue'
 const route = useRoute()
 const libraryStore = useLibraryStore()
 
-const studentPaths = ['/basecamp', '/discovery', '/archive', '/hall-of-fame', '/skill-tree']
+const studentPaths = ['/basecamp','/discovery','/archive','/hall-of-fame','/skill-tree','/artikel','/festival','/galeri-karya']
 const isStudentRoute   = computed(() => studentPaths.some(p => route.path.startsWith(p)))
 const isLibrarianRoute = computed(() => route.path.startsWith('/librarian'))
 </script>
